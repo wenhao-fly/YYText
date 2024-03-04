@@ -117,6 +117,12 @@ static dispatch_queue_t YYTextAsyncLayerGetReleaseQueue() {
 #pragma mark - Private
 
 - (void)_displayAsync:(BOOL)async {
+    
+    if (self.bounds.size.width<=0 || self.bounds.size.height<=0) {
+    self.contents = nil;
+    return;
+    }
+    
     __strong id<YYTextAsyncLayerDelegate> delegate = (id)self.delegate;
     YYTextAsyncLayerDisplayTask *task = [delegate newAsyncDisplayTask];
     if (!task.display) {
@@ -200,7 +206,6 @@ static dispatch_queue_t YYTextAsyncLayerGetReleaseQueue() {
     } else {
         [_sentinel increase];
         if (task.willDisplay) task.willDisplay(self);
-        if (CGSizeEqualToSize(self.bounds.size, CGSizeZero)) return;
         UIGraphicsBeginImageContextWithOptions(self.bounds.size, self.opaque, self.contentsScale);
         CGContextRef context = UIGraphicsGetCurrentContext();
         if (self.opaque && context) {
